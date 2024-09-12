@@ -1,0 +1,137 @@
+﻿@model List<Movies>
+@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    .card_out {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        z-index: 1;
+       
+    }
+
+        .card_out .card {
+            margin: 10px;
+        }
+
+            .card_out .card img {
+                height: 350px;
+            }
+
+        .card_out::-webkit-scrollbar {
+            display: none;
+        }
+
+    .card-text {
+        max-height: 100px; /* Adjust this value to fit your needs */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* Number of lines to show before truncating */
+        -webkit-box-orient: vertical;
+    }
+    #card_out_out {
+        position: relative;
+    }
+
+    #btnLast {
+        position: absolute;
+        z-index: 2;
+        top: 50%;
+        left: 10px;
+        border: none;
+        font-size: 30px;
+        background-color: #0000;
+        color: lightblue;
+    }
+
+    #btnPast {
+        position: absolute;
+        z-index: 2;
+        top: 50%;
+        right: 10px;
+        border: none;
+        font-size: 30px;
+        background-color: #0000;
+        color: lightblue;
+    }
+
+    .text-center {
+        color: #000;
+    }
+</style>
+<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner" style="max-height:400px">
+        <div class="carousel-item active">
+            <img src="~/lib/img/banner/1-1.jpg" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="~/lib/img/banner/2-1.jpg" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="~/lib/img/banner/3-1.jpg" class="d-block w-100" alt="...">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+<div style="background-color:#BEBEBE; margin:10px 0;padding:5px">
+    <label>快速訂位</label>
+    <label>電影</label>
+    <select>
+        <option value="value">text</option>
+        <option value="value">text</option>
+        <option value="value">text</option>
+    </select>
+</div>
+<div id="card_out_out">
+    <button id="btnLast">＜</button>
+    <div class="card_out">
+        @foreach (var user in Model)
+        {
+
+            <div class="text-center">
+                <div class="card" style="width: 18rem;">
+                    <img src="~/lib/img/@user.MoviePicture" class="card-img-top" alt="..." width="60%">
+                    <div class="card-body">
+                        <h5 class="card-title" style="margin:10px -100px">《@user.MovieTitle》</h5>
+                        <p class="card-text">@user.MovieDescription</p>
+                        <a href="~/Home/Programs#@user.MovieID" class="btn btn-primary">線上訂票</a>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+    <button id="btnPast">＞</button>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var btnLast = document.getElementById('btnLast');
+        var btnPast = document.getElementById('btnPast');
+        var cardOut = document.querySelector('.card_out');
+
+        btnLast.addEventListener('click', function () {
+            // Scroll left
+            cardOut.scrollBy({ left: -300, behavior: 'smooth' });
+        });
+
+        btnPast.addEventListener('click', function () {
+            // Scroll right
+            cardOut.scrollBy({ left: 300, behavior: 'smooth' });
+        });
+    });
+</script>

@@ -1,0 +1,116 @@
+﻿<style>
+    .text-center {
+        color: #fff;
+    }
+
+    .seatform {
+        max-width: 650px;
+        margin: 0px auto;
+    }
+
+        .seatform button {
+            width: 60px;
+            height: 30px;
+            border: 1px solid #000079;
+            border-radius: 10px 10px 0 0;
+            margin: 10px 0;
+        }
+
+    .btn-disabled {
+        background-color: #4F4F4F; /* 灰色表示已訂購 */
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+</style>
+
+<div class="text-center" id="app">
+    <h5 class="display-6">選擇座位</h5>
+
+    <div class="seatform">
+        <form method="post">
+            @foreach (var seat in Model)
+            {
+                <button type="button"
+                        v-on:click="toggleSeatSelection('@seat.SeatNumber')"
+                        :class="{
+                            'btn-danger': selectedSeats.includes('@seat.SeatNumber'),
+                            'btn-light': !selectedSeats.includes('@seat.SeatNumber') && !bookedSeats.includes('@seat.SeatNumber'),
+                            'btn-disabled': bookedSeats.includes('@seat.SeatNumber')
+                        }">
+                    @seat.SeatNumber
+                </button>
+            }
+        </form>
+        <div>
+            <label>訂票資訊</label>
+            <p>{{ msg }}</p>
+            <button v-on:click="confirmSelection" style="width:90px;border-radius:0;">訂購確認</button>
+        </div>
+    </div>
+    <br />
+    <div>
+        <a asp-action="Index">↫ Back to Home</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    msg: "選擇座位",
+                    selectedSeats: [], // 追蹤選中的座位
+                    bookedSeats: [],   // 追蹤已訂購的座位
+                }
+            },
+            methods: {
+                toggleSeatSelection(seatNumber) {
+                    // 切換座位的選擇狀態
+                    const isSelected = this.selectedSeats.includes(seatNumber);
+                    if (isSelected) {
+                        // 從選中列表中移除
+                        this.selectedSeats = this.selectedSeats.filter(seat => seat !== seatNumber);
+                    } else {
+                        // 將座位添加到選中列表中
+                        this.selectedSeats.push(seatNumber);
+                    }
+
+                    // 更新消息
+                    this.msg = `選擇的座位： ${this.selectedSeats.join(', ')}`;
+                },
+                async confirmSelection() {
+                    try {
+                        if (this.selectedSeats.length === 0) {
+                            this.msg = "請選擇座位後再確認訂購";
+                            return;
+                        }
+
+                        // 發送 POST 請求到後端
+                        const response = await fetch('/Home/UpdateAvailability', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ seats: this.selectedSeats })
+                        });
+
+                        if (response.ok) {
+                            // 將選中的座位轉移到已訂購的座位
+                            this.bookedSeats = [...this.bookedSeats, ...this.selectedSeats];
+                            this.selectedSeats = []; // 清空選中的座位
+
+                            this.msg = "訂購成功";
+                        } else {
+                            this.msg = "更新失敗";
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        this.msg = "更新失敗";
+                    }
+                }
+            }
+        });
+
+        const vm = app.mount('#app');
+    </script>
+}
