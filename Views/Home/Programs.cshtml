@@ -4,50 +4,48 @@
 }
 <form method="post">
 
-    @foreach (var user in Model.Movies)
+    @foreach (var movie in Model.Movies)
     {
-        <div id="@user.MovieID">
+        <div id="@movie.MovieID">
 
-            <h3>《@user.MovieTitle》</h3>
-            <p>電影級別：@user.MovieGenre</p>
-            <p>電影片長：@user.MovieDuration 分鐘</p>
-            <p>上映日期：@user.ReleaseDate</p>
-            <p>電影描述：@user.MovieDescription</p>
-            <img src="~/lib/img/@user.MoviePicture" alt="Alternate Text" style="max-height:350px" />
+            <h3>《@movie.MovieTitle》</h3>
+            <p>電影級別：@movie.MovieGenre</p>
+            <p>電影片長：@movie.MovieDuration 分鐘</p>
+            <p>上映日期：@movie.ReleaseDate</p>
+            <p>電影描述：@movie.MovieDescription</p>
+            <img src="~/lib/img/@movie.MoviePicture" alt="Alternate Text" style="max-height:350px" />
             <hr />
             <div>
                 <p>場次：</p>
-                <div id="seat" >
+                <div id="seat-@movie.MovieID">
+                   
+                    @foreach (var show in Model.Showtimes)
+                    {
+                        <button v-on:click="divShow">
+                            @show.ShowDateTime.ToString("HH:mm")
+                        </button>
+                    }
                     <div v-show="isShow">111111</div>
-                @foreach (var show in Model.Showtimes)
-                {
-                        
-                   <button v-on:click="divShow()">
-                        @*   @show.ShowDateTime.ToString("yyyy-MM-dd")  *@
-                        @show.ShowDateTime.ToString("HH:mm")
-                    </button>
-                }
-                </div>
+                </div>             
             </div>
             <hr />
             
             </div>
-    
-
         <br />
     }
 </form>
 <script>
+
     const app = Vue.createApp(){
         data(){
-                return {
-                    isShow: false
-                }
+            return {
+                isShow: false
+            }
         },
-    methods{
-    divShow(){
-        this.isShow = true;
+            methods{
+        divShow(){
+            this.isShow = true;
+        }
     }
-    }
-            }.mount('#seat')
+                    }.mount('#seat')
 </script>
